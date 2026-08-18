@@ -41,8 +41,10 @@ ENV TZ=Asia/Shanghai \
     USAGE_DATA_DIR=/data \
     USAGE_DB_PATH=/data/usage.sqlite
 
-RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates tzdata \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates tzdata netcat-openbsd \
+    && rm -rf /var/lib/apt/lists/* \
+    && echo "* soft nofile 65535" >> /etc/security/limits.conf \
+    && echo "* hard nofile 65535" >> /etc/security/limits.conf
 
 COPY --from=caddybin /caddy /usr/local/bin/caddy
 COPY --from=cli /CLIProxyAPI/CLIProxyAPI /CLIProxyAPI/CLIProxyAPI
