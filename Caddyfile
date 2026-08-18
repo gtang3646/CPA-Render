@@ -1,0 +1,9 @@
+:{$PORT:10000}
+
+handle /v1* {
+    reverse_proxy 127.0.0.1:8317
+}
+
+handle {
+    reverse_proxy 127.0.0.1:18317
+}
