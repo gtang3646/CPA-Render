@@ -47,8 +47,6 @@ ENV TZ=Asia/Shanghai \
     USAGE_DATA_DIR=/data \
     USAGE_DB_PATH=/data/usage.sqlite
 
-RUN apt-get update && apt-get install -y --no-install-recommends tzdata && rm -rf /var/lib/apt/lists/*
-
 COPY --from=cli /out/CLIProxyAPI /CLIProxyAPI/CLIProxyAPI
 COPY --from=manager /out/cpa-manager-plus /usr/local/bin/cpa-manager-plus
 COPY Caddyfile /etc/caddy/Caddyfile
