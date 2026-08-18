@@ -30,9 +30,9 @@ WORKDIR /src/apps/manager-server
 RUN go mod download
 RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -o /out/cpa-manager-plus ./cmd/cpa-manager-plus
 
-# ============ Stage 4: 从官方镜像取 Caddy 静态二进制 ============
-FROM caddy:2-alpine AS caddybin
-RUN ln -sf "$(command -v caddy)" /caddy
+# ============ Stage 4: 从官方镜像取 Caddy 静态二进制 (改为非 Alpine 版本，确保 glibc 兼容) ============
+FROM caddy:2 AS caddybin
+RUN cp "$(command -v caddy)" /caddy
 
 # ============ 最终镜像（Debian，glibc 环境） ============
 FROM debian:bookworm-slim
@@ -49,7 +49,8 @@ COPY --from=cli /CLIProxyAPI/CLIProxyAPI /CLIProxyAPI/CLIProxyAPI
 COPY --from=manager /out/cpa-manager-plus /usr/local/bin/cpa-manager-plus
 COPY Caddyfile /etc/caddy/Caddyfile
 COPY start.sh /app/start.sh
-RUN chmod +x /app/start.sh
+
+RUN chmod +x /usr/local/bin/caddy /usr/local/bin/cpa-manager-plus /app/start.sh
 
 EXPOSE 10000
 ENTRYPOINT ["/app/start.sh"]
